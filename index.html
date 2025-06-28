@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title> Site Deployment</title>
+  <meta name="description" content="Explore Axrader – a showcase of cutting-edge AI tools, personal projects, and more. Built with Puter.">
+  <meta name="keywords" content="axrader, ai tools, web projects, html hosting, puter site">
+  <meta name="author" content="Subhankar Das">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://js.puter.c<meta name="description" content="Explore Axrader – a showcase of cutting-edge AI tools, personal projects, and more. Built with Puter.">
+  <meta name="keywords" content="axrader, ai tools, web projects, html hosting, puter site">
+  <meta name="author" content="Site deploy">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">om/v2/"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #000000;
+      --muted: #444;
+      --border: #ddd;
+      --primary: #000000;
+      --primary-hover: #333;
+      --error: #c00;
+      --transition: 0.2s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 720px;
+      width: 100%;
+      background: #fff;
+      border: 1px solid var(--border);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
+    label {
+      font-size: 0.95rem;
+      color: var(--muted);
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    input, textarea {
+      background: #fff;
+      color: #000;
+      border: 1px solid var(--border);
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: border var(--transition);
+    }
+
+    input:focus, textarea:focus {
+      border-color: var(--primary);
+      outline: none;
+    }
+
+    textarea {
+      height: 160px;
+      resize: vertical;
+    }
+
+    button {
+      background: var(--primary);
+      color: #fff;
+      padding: 0.85rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: background var(--transition), transform var(--transition);
+    }
+
+    button:hover {
+      background: var(--primary-hover);
+      transform: scale(1.01);
+    }
+
+    .log {
+      font-size: 0.9rem;
+      background: #f8f8f8;
+      color: #111;
+      border: 1px solid var(--border);
+      padding: 1rem;
+      white-space: pre-wrap;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    a {
+      color: var(--primary);
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Deploy Your Website</h1>
+
+    <label>
+      Subdomain:
+      <input id="sub" type="text" placeholder="e.g. axrader">
+    </label>
+
+    <label>
+      HTML for index.html:
+      <textarea id="html" placeholder="&lt;h1&gt;Hello, world!&lt;/h1&gt;"></textarea>
+    </label>
+
+    <button id="deploy">Deploy</button>
+
+    <div id="out" class="log"></div>
+  </div>
+
+  <script>
+    const log = (msg, clear = false) => {
+      const out = document.getElementById('out');
+      if (clear) out.innerHTML = '';
+      out.innerHTML += msg + '<br>';
+    };
+
+    document.getElementById('deploy').addEventListener('click', async () => {
+      const sub = document.getElementById('sub').value.trim().toLowerCase();
+      const html = document.getElementById('html').value.trim();
+
+      log('🚀 Deploying...', true);
+
+      if (!/^[a-z0-9-]{3,63}$/.test(sub)) {
+        log('<span style="color: var(--error)">❌ Invalid subdomain. Use 3–63 lowercase letters, numbers, or dashes.</span>');
+        return;
+      }
+
+      if (!html) {
+        log('<span style="color: var(--error)">❌ HTML content is required.</span>');
+        return;
+      }
+
+      try {
+        const dir = puter.randName();
+        log('📁 Creating cloud folder...');
+        await puter.fs.mkdir(dir);
+
+        log('📝 Uploading index.html...');
+        await puter.fs.write(`${dir}/index.html`, html);
+
+        log('🌐 Binding to https://' + sub + '.puter.site...');
+        const site = await puter.hosting.create(sub, dir);
+
+        log('✅ Site published:');
+        log(`<a href="https://${site.subdomain}.puter.site" target="_blank">${site.subdomain}.puter.site</a>`);
+      } catch (err) {
+        log(`<span style="color: var(--error)">❌ ${err.message}</span>`);
+        if (/already exists/i.test(err.message)) {
+          log('💡 Try another subdomain or delete the existing one.');
+        }
+      }
+    });
+  </script>
+</body>
+</html>
