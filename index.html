@@ -1,192 +1,162 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Site Deployment</title>
-  <meta name="description" content="Explore Axrader – a showcase of cutting-edge AI tools, personal projects, and more. Built with Puter.">
-  <meta name="keywords" content="axrader, ai tools, web projects, html hosting, puter site">
-  <meta name="author" content="Subhankar Das">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Puter Site Builder — Anonymous</title>
 
-  <!-- ✅ FIXED script tag -->
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://js.puter.com/v2/"></script>
 
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-
   <style>
-    :root {
-      --bg: #ffffff;
-      --text: #000000;
-      --muted: #444;
-      --border: #ddd;
-      --primary: #000000;
-      --primary-hover: #333;
-      --error: #c00;
-      --transition: 0.2s ease;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 2rem;
-    }
-
-    .container {
-      max-width: 720px;
-      width: 100%;
-      background: #fff;
-      border: 1px solid var(--border);
-      padding: 2rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-      animation: fadeIn 0.3s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    h1 {
-      font-size: 1.5rem;
-      font-weight: 600;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 0.5rem;
-    }
-
-    label {
-      font-size: 0.95rem;
-      color: var(--muted);
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-    }
-
-    input, textarea {
-      background: #fff;
-      color: #000;
-      border: 1px solid var(--border);
-      padding: 0.75rem 1rem;
-      font-size: 1rem;
-      font-family: inherit;
-      transition: border var(--transition);
-    }
-
-    input:focus, textarea:focus {
-      border-color: var(--primary);
-      outline: none;
-    }
-
-    textarea {
-      height: 160px;
-      resize: vertical;
-    }
-
-    button {
-      background: var(--primary);
-      color: #fff;
-      padding: 0.85rem;
-      font-size: 1rem;
-      font-weight: 600;
-      border: none;
-      cursor: pointer;
-      transition: background var(--transition), transform var(--transition);
-    }
-
-    button:hover {
-      background: var(--primary-hover);
-      transform: scale(1.01);
-    }
-
-    .log {
-      font-size: 0.9rem;
-      background: #f8f8f8;
-      color: #111;
-      border: 1px solid var(--border);
-      padding: 1rem;
-      white-space: pre-wrap;
-      line-height: 1.5;
-      word-break: break-word;
-    }
-
-    a {
-      color: var(--primary);
-      text-decoration: underline;
-    }
+    .font-nunito { font-family: 'Nunito', sans-serif; }
+    #editor { min-height: 250px; height: 100%; }
+    #chat-textarea { min-height: 2.5rem; max-height: 8rem; overflow-y: auto; }
   </style>
 </head>
-<body>
-  <div class="container">
-    <h1>Deploy Your Website</h1>
 
-    <label>
-      Subdomain:
-      <input id="sub" type="text" placeholder="e.g. axrader">
-    </label>
+<body class="min-h-screen bg-[#120825] flex items-center justify-center p-2 font-nunito">
 
-    <label>
-      HTML for index.html:
-      <textarea id="html" placeholder="&lt;h1&gt;Hello, world!&lt;/h1&gt;"></textarea>
-    </label>
+  <div class="w-full max-w-[90rem] h-[92vh] sm:h-[90vh] border-2 border-[rgba(75,30,133,0.5)]
+              rounded-[1.5em] bg-gradient-to-br from-[rgba(75,30,133,1)]
+              to-[rgba(75,30,133,0.05)] backdrop-blur-[12px]
+              text-white flex flex-col gap-6 p-4 sm:p-6">
 
-    <button id="deploy">Deploy</button>
+    <!-- Header -->
+    <header class="flex flex-wrap items-center gap-4">
+      <h1 class="text-3xl sm:text-4xl font-medium flex-1">🚀 Puter Site Builder</h1>
+      <button id="toggle-chat" class="md:hidden underline text-sm">AI Chat</button>
+    </header>
 
-    <div id="out" class="log"></div>
+    <!-- Workspace -->
+    <main class="flex-1 grid grid-cols-1 md:grid-cols-[1fr_22rem] gap-4 overflow-hidden">
+      <textarea id="editor"
+        class="w-full h-full p-4 bg-[#1e113b]/50 border border-white/20 rounded
+               font-mono text-sm leading-6 resize-none focus:outline-none
+               focus:ring-2 focus:ring-white/40" spellcheck="false">
+<!DOCTYPE html>
+<html>
+  <head><meta charset="utf-8"><title>Hello</title></head>
+  <body><h1 class="text-center">Hello, Puter!</h1></body>
+</html>
+      </textarea>
+
+      <aside id="chat-aside"
+             class="hidden md:flex flex-col bg-[#1e113b]/50 border border-white/20 rounded overflow-hidden">
+        <div id="messages" class="flex-1 px-4 py-3 space-y-3 overflow-y-auto text-sm"></div>
+        <div class="flex border-t border-white/10">
+          <textarea id="chat-textarea"
+            class="flex-1 p-3 bg-transparent resize-none focus:outline-none"
+            placeholder="Ask about your code…" rows="1"></textarea>
+          <button id="chat-send"
+            class="px-4 bg-white/10 hover:bg-white/20 transition">Send</button>
+        </div>
+      </aside>
+    </main>
+
+    <!-- Footer -->
+    <footer class="flex flex-col gap-3">
+      <div class="flex flex-col gap-1">
+        <label class="flex flex-wrap items-center gap-2">
+          <span>Sub‑domain:</span>
+          <input id="sub"
+            class="w-52 sm:w-64 max-w-full px-2 py-1 bg-white/10 border border-white/20 rounded
+                   focus:outline-none"
+            placeholder="blank = random">
+        </label>
+        <p class="text-xs text-white/70 sm:pl-[6.8rem]">
+          • Letters, numbers, or hyphens only (no spaces).<br>
+          • Cannot start or end with a hyphen.<br>
+          • Leave blank to generate a random name.<br>
+          • If any error appears, please tap “Clear Log” and try again.
+        </p>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-3">
+        <button id="publish"
+          class="flex items-center gap-2 px-4 py-1 border border-white/40 rounded-full
+                 hover:translate-y-[0.125em] transition backdrop-blur-[12px]">
+          <span>Publish</span>
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="white" stroke="currentColor" stroke-width="1"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M13.5 4.5 21 12 13.5 19.5M21 12H3"/>
+          </svg>
+        </button>
+
+        <button id="clear-log"
+          class="px-4 py-1 bg-white/10 border border-white/20 rounded hover:bg-white/20 transition">
+          Clear Log
+        </button>
+      </div>
+
+      <pre id="log" class="text-sm whitespace-pre-wrap overflow-y-auto max-h-28 sm:max-h-36"></pre>
+    </footer>
   </div>
 
   <script>
-    const log = (msg, clear = false) => {
-      const out = document.getElementById('out');
-      if (clear) out.innerHTML = '';
-      out.innerHTML += msg + '<br>';
+    const $   = s => document.querySelector(s);
+    const log = t => $('#log').textContent += t + '\n';
+
+    $('#toggle-chat').onclick = () => {
+      $('#chat-aside').classList.toggle('hidden');
+      $('#chat-aside').classList.toggle('flex');
+    };
+    $('#clear-log').onclick = () => $('#log').textContent = '';
+
+    $('#publish').onclick = async () => {
+      try {
+        log('⏳ Saving...');
+        const dir = puter.randName();
+        await puter.fs.mkdir(dir);
+        await puter.fs.write(`${dir}/index.html`, $('#editor').value);
+        const sub = ($('#sub').value || puter.randName()).toLowerCase();
+        const site = await puter.hosting.create(sub, dir);
+        const url = `https://${site.subdomain}.puter.site`;
+        log('✅ Published: ' + url);
+        window.open(url, '_blank');
+      } catch (e) {
+        log('❌ Error: ' + (e?.message || 'Unknown'));
+      }
     };
 
-    document.getElementById('deploy').addEventListener('click', async () => {
-      const sub = document.getElementById('sub').value.trim().toLowerCase();
-      const html = document.getElementById('html').value.trim();
-
-      log('🚀 Deploying...', true);
-
-      if (!/^[a-z0-9-]{3,63}$/.test(sub)) {
-        log('<span style="color: var(--error)">❌ Invalid subdomain. Use 3–63 lowercase letters, numbers, or dashes.</span>');
-        return;
-      }
-
-      if (!html) {
-        log('<span style="color: var(--error)">❌ HTML content is required.</span>');
-        return;
-      }
-
+    const chatTA = $('#chat-textarea');
+    const appendMsg = (role, txt) => {
+      const div = document.createElement('div');
+      div.className = role === 'user'
+        ? 'font-semibold'
+        : 'border-l-2 pl-2 border-white/30';
+      div.textContent = txt;
+      $('#messages').appendChild(div);
+      $('#messages').scrollTop = $('#messages').scrollHeight;
+    };
+    chatTA.addEventListener('input', () => {
+      chatTA.style.height = 'auto';
+      chatTA.style.height = chatTA.scrollHeight + 'px';
+    });
+    async function sendChat() {
+      const txt = chatTA.value.trim();
+      if (!txt) return;
+      appendMsg('user', txt);
+      chatTA.value = ''; chatTA.style.height = 'auto';
+      $('#chat-send').disabled = true;
       try {
-        const dir = puter.randName();
-        log('📁 Creating cloud folder...');
-        await puter.fs.mkdir(dir);
-
-        log('📝 Uploading index.html...');
-        await puter.fs.write(`${dir}/index.html`, html);
-
-        log('🌐 Binding to https://' + sub + '.puter.site...');
-        const site = await puter.hosting.create(sub, dir);
-
-        log('✅ Site published:');
-        log(`<a href="https://${site.subdomain}.puter.site" target="_blank">${site.subdomain}.puter.site</a>`);
-      } catch (err) {
-        log(`<span style="color: var(--error)">❌ ${err.message}</span>`);
-        if (/already exists/i.test(err.message)) {
-          log('💡 Try another subdomain or delete the existing one.');
-        }
+        const res = await puter.ai.chat(txt);
+        const answer = res?.message?.content
+                    ?? res?.choices?.[0]?.message?.content
+                    ?? res?.text ?? res;
+        appendMsg('assistant', answer.toString().trim());
+      } catch (e) {
+        appendMsg('assistant', '(error) ' + (e?.message || 'Unknown error'));
+      } finally {
+        $('#chat-send').disabled = false;
+      }
+    }
+    $('#chat-send').onclick = sendChat;
+    chatTA.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendChat();
       }
     });
   </script>
