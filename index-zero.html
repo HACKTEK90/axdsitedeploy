@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Zero Gravity Site Builder</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://js.puter.com/v2/"></script>
+
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .float { animation: float 6s ease-in-out infinite; }
+    .float-delay { animation: float 6s ease-in-out infinite 2s; }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    .glow { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+    .stars { background: radial-gradient(2px 2px at 20px 30px, #eee, transparent), radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.5), transparent), radial-gradient(1px 1px at 90px 40px, #fff, transparent), radial-gradient(1px 2px at 130px 80px, rgba(255,255,255,0.5), transparent); background-size: 200px 100px; }
+  </style>
+</head>
+
+<body class="min-h-screen bg-black overflow-hidden stars">
+  <div class="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-purple-900/20 to-black"></div>
+  
+  <div class="relative min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-6xl bg-gray-900/40 backdrop-blur-xl border border-gray-700/50 
+                rounded-3xl p-6 text-white shadow-2xl float">
+
+      <!-- Header -->
+      <header class="flex items-center justify-between mb-8">
+        <h1 class="text-4xl font-light tracking-wide">🌌 Zero Gravity Builder</h1>
+        <div class="flex gap-3">
+          <button id="version-toggle" 
+            class="px-6 py-2 bg-blue-500/20 border border-blue-400/30 rounded-full 
+                   text-blue-300 font-light hover:bg-blue-500/30 transition-all 
+                   duration-300 glow float-delay">
+            Back to v1
+          </button>
+          <button id="toggle-chat" class="md:hidden text-gray-400 hover:text-white transition">Chat</button>
+        </div>
+      </header>
+
+      <!-- Workspace -->
+      <main class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <div class="lg:col-span-2">
+          <div class="bg-gray-800/30 border border-gray-600/30 rounded-2xl p-4 backdrop-blur-sm">
+            <textarea id="editor"
+              class="w-full h-96 p-4 bg-black/50 border border-gray-500/30 rounded-xl
+                     font-mono text-sm text-gray-100 resize-none focus:outline-none
+                     focus:border-blue-400/50 transition-colors" spellcheck="false"
+              placeholder="// Zero gravity coding..."><!DOCTYPE html>
+<html>
+  <head><meta charset="utf-8"><title>Zero Gravity</title></head>
+  <body style="margin:0;background:linear-gradient(45deg,#000,#1a1a2e);color:#fff;font-family:Inter;display:flex;align-items:center;justify-content:center;min-height:100vh">
+    <h1 style="font-size:3rem;font-weight:300;text-align:center">Floating in Space 🌌</h1>
+  </body>
+</html></textarea>
+          </div>
+        </div>
+
+        <aside id="chat-aside" class="hidden lg:block">
+          <div class="bg-gray-800/30 border border-gray-600/30 rounded-2xl backdrop-blur-sm h-full flex flex-col">
+            <div class="p-4 border-b border-gray-600/30">
+              <h3 class="font-light text-gray-300">AI Assistant</h3>
+            </div>
+            <div id="messages" class="flex-1 p-4 space-y-3 overflow-y-auto text-sm">
+              <div class="text-gray-500 text-center py-8">Floating in zero gravity...</div>
+            </div>
+            <div class="p-4 border-t border-gray-600/30">
+              <div class="flex gap-2">
+                <textarea id="chat-textarea"
+                  class="flex-1 p-3 bg-black/30 border border-gray-500/30 rounded-lg
+                         text-gray-100 resize-none focus:outline-none focus:border-blue-400/50
+                         placeholder-gray-500 transition-colors"
+                  placeholder="Ask about your code..." rows="1"></textarea>
+                <button id="chat-send"
+                  class="px-4 py-2 bg-blue-500/20 border border-blue-400/30 rounded-lg
+                         text-blue-300 hover:bg-blue-500/30 transition-all">Send</button>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </main>
+
+      <!-- Controls -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div class="bg-gray-800/30 border border-gray-600/30 rounded-2xl p-6 backdrop-blur-sm">
+          <label class="block mb-4">
+            <span class="text-gray-300 font-light mb-2 block">Subdomain</span>
+            <input id="sub"
+              class="w-full px-4 py-3 bg-black/30 border border-gray-500/30 rounded-lg
+                     text-gray-100 focus:outline-none focus:border-blue-400/50
+                     placeholder-gray-500 transition-colors"
+              placeholder="Leave blank for random">
+          </label>
+          <p class="text-xs text-gray-500 font-light">
+            Letters, numbers, hyphens only. Cannot start/end with hyphen.
+          </p>
+        </div>
+
+        <div class="bg-gray-800/30 border border-gray-600/30 rounded-2xl p-6 backdrop-blur-sm">
+          <div class="flex gap-3 mb-4">
+            <button id="publish"
+              class="flex-1 flex items-center justify-center gap-2 px-6 py-3
+                     bg-gradient-to-r from-blue-500/20 to-purple-500/20
+                     border border-blue-400/30 rounded-xl text-blue-300
+                     hover:from-blue-500/30 hover:to-purple-500/30
+                     transition-all duration-300 glow">
+              <span>Launch</span>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+              </svg>
+            </button>
+            <button id="clear-log"
+              class="px-4 py-3 bg-gray-700/30 border border-gray-500/30 rounded-xl
+                     text-gray-400 hover:text-gray-200 hover:bg-gray-600/30 transition-all">
+              Clear
+            </button>
+          </div>
+          <pre id="log" class="text-xs text-gray-400 bg-black/30 rounded-lg p-3 h-20 overflow-y-auto">Ready for zero gravity deployment...</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const $ = s => document.querySelector(s);
+    const log = t => {
+      const logEl = $('#log');
+      logEl.textContent += new Date().toLocaleTimeString() + ' - ' + t + '\n';
+      logEl.scrollTop = logEl.scrollHeight;
+    };
+
+    $('#version-toggle').onclick = () => window.location.href = 'index.html';
+    $('#toggle-chat').onclick = () => {
+      $('#chat-aside').classList.toggle('hidden');
+      $('#chat-aside').classList.toggle('block');
+    };
+    $('#clear-log').onclick = () => $('#log').textContent = 'Ready for zero gravity deployment...';
+
+    $('#publish').onclick = async () => {
+      try {
+        log('🚀 Initiating launch sequence...');
+        const dir = puter.randName();
+        await puter.fs.mkdir(dir);
+        await puter.fs.write(`${dir}/index.html`, $('#editor').value);
+        const sub = ($('#sub').value || puter.randName()).toLowerCase();
+        log('🌌 Creating orbital path...');
+        const site = await puter.hosting.create(sub, dir);
+        const url = `https://${site.subdomain}.puter.site`;
+        log('✨ Successfully launched into orbit!');
+        log(`🔗 ${url}`);
+        window.open(url, '_blank');
+      } catch (e) {
+        log('💥 Launch failed: ' + (e?.message || 'Unknown error'));
+      }
+    };
+
+    const chatTA = $('#chat-textarea');
+    const appendMsg = (role, txt) => {
+      const div = document.createElement('div');
+      div.className = role === 'user'
+        ? 'bg-blue-500/10 border border-blue-400/20 rounded-lg p-3 text-blue-200'
+        : 'bg-gray-700/30 border border-gray-600/20 rounded-lg p-3 text-gray-300';
+      div.textContent = txt;
+      const messages = $('#messages');
+      if (messages.children[0]?.textContent.includes('zero gravity')) {
+        messages.innerHTML = '';
+      }
+      messages.appendChild(div);
+      messages.scrollTop = messages.scrollHeight;
+    };
+
+    chatTA.addEventListener('input', () => {
+      chatTA.style.height = 'auto';
+      chatTA.style.height = Math.min(chatTA.scrollHeight, 120) + 'px';
+    });
+
+    async function sendChat() {
+      const txt = chatTA.value.trim();
+      if (!txt) return;
+      appendMsg('user', txt);
+      chatTA.value = '';
+      chatTA.style.height = 'auto';
+      const sendBtn = $('#chat-send');
+      sendBtn.disabled = true;
+      sendBtn.textContent = '...';
+      try {
+        const res = await puter.ai.chat(txt);
+        const answer = res?.message?.content ?? res?.choices?.[0]?.message?.content ?? res?.text ?? res;
+        appendMsg('assistant', answer.toString().trim());
+      } catch (e) {
+        appendMsg('assistant', 'Communication lost in space: ' + (e?.message || 'Unknown error'));
+      } finally {
+        sendBtn.disabled = false;
+        sendBtn.textContent = 'Send';
+      }
+    }
+
+    $('#chat-send').onclick = sendChat;
+    chatTA.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendChat();
+      }
+    });
+
+    log('🌌 Zero Gravity Builder initialized');
+  </script>
+</body>
+</html>
