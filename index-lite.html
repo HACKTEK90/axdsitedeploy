@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Site Builder — Lite</title>
+  <script src="https://js.puter.com/v2/"></script>
+
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; margin: 0; padding: 8px; min-height: 100vh; background: #120825; color: white; }
+    .container { max-width: 1200px; margin: 0 auto; background: linear-gradient(135deg, #4b1e85, rgba(75,30,133,0.05)); border: 2px solid rgba(75,30,133,0.5); border-radius: 24px; padding: 24px; height: 90vh; display: flex; flex-direction: column; gap: 24px; }
+    .header { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .title { font-size: 2rem; font-weight: 500; flex: 1; }
+    .btn { padding: 8px 16px; background: linear-gradient(90deg, #3b82f6, #8b5cf6); border: none; border-radius: 8px; color: white; cursor: pointer; transition: opacity 0.2s; }
+    .btn:hover { opacity: 0.8; }
+    .main { flex: 1; display: grid; grid-template-columns: 1fr 300px; gap: 16px; overflow: hidden; }
+    .editor { width: 100%; height: 100%; padding: 16px; background: rgba(30,17,59,0.5); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; font-family: monospace; font-size: 14px; color: white; resize: none; outline: none; }
+    .chat { display: flex; flex-direction: column; background: rgba(30,17,59,0.5); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; overflow: hidden; }
+    .messages { flex: 1; padding: 16px; overflow-y: auto; font-size: 14px; }
+    .input-row { display: flex; border-top: 1px solid rgba(255,255,255,0.1); }
+    .chat-input { flex: 1; padding: 12px; background: transparent; border: none; color: white; outline: none; resize: none; }
+    .send-btn { padding: 0 16px; background: rgba(255,255,255,0.1); border: none; color: white; cursor: pointer; }
+    .footer { display: flex; flex-direction: column; gap: 12px; }
+    .domain-input { padding: 4px 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; color: white; outline: none; }
+    .actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .publish-btn { display: flex; align-items: center; gap: 8px; padding: 4px 16px; border: 1px solid rgba(255,255,255,0.4); border-radius: 20px; background: transparent; color: white; cursor: pointer; transition: transform 0.1s; }
+    .publish-btn:hover { transform: translateY(2px); }
+    .log { font-size: 12px; max-height: 120px; overflow-y: auto; white-space: pre-wrap; }
+    .hidden { display: none !important; }
+    @media (max-width: 768px) {
+      .main { grid-template-columns: 1fr; }
+      .chat { display: none; }
+      .title { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header class="header">
+      <h1 class="title">🚀 Acrader Site Builder</h1>
+      <div>
+        <button id="version-toggle" class="btn">Back to Original</button>
+        <button id="toggle-chat" class="btn" style="display:none">Chat</button>
+      </div>
+    </header>
+
+    <main class="main">
+      <textarea id="editor" class="editor" spellcheck="false"><!DOCTYPE html>
+<html>
+  <head><meta charset="utf-8"><title>Hello</title></head>
+  <body><h1 style="text-align:center">Hello, Puter!</h1></body>
+</html></textarea>
+
+      <aside id="chat-aside" class="chat">
+        <div id="messages" class="messages"></div>
+        <div class="input-row">
+          <textarea id="chat-textarea" class="chat-input" placeholder="Ask about your code..." rows="1"></textarea>
+          <button id="chat-send" class="send-btn">Send</button>
+        </div>
+      </aside>
+    </main>
+
+    <footer class="footer">
+      <div>
+        <label>
+          <span>Subdomain:</span>
+          <input id="sub" class="domain-input" placeholder="blank = random">
+        </label>
+        <p style="font-size:12px;opacity:0.7;margin:4px 0 0 0">
+          Letters, numbers, hyphens only. Cannot start/end with hyphen.
+        </p>
+      </div>
+
+      <div class="actions">
+        <button id="publish" class="publish-btn">
+          <span>Publish</span>
+          <span>→</span>
+        </button>
+        <button id="clear-log" class="btn" style="background:rgba(255,255,255,0.1)">Clear</button>
+      </div>
+
+      <pre id="log" class="log"></pre>
+    </footer>
+  </div>
+
+  <script>
+    const $ = s => document.querySelector(s);
+    const log = t => $('#log').textContent += t + '\n';
+
+    $('#toggle-chat').onclick = () => {
+      $('#chat-aside').classList.toggle('hidden');
+    };
+    $('#clear-log').onclick = () => $('#log').textContent = '';
+    $('#version-toggle').onclick = () => window.location.href = 'index.html';
+
+    $('#publish').onclick = async () => {
+      try {
+        log('⏳ Saving...');
+        const dir = puter.randName();
+        await puter.fs.mkdir(dir);
+        await puter.fs.write(`${dir}/index.html`, $('#editor').value);
+        const sub = ($('#sub').value || puter.randName()).toLowerCase();
+        const site = await puter.hosting.create(sub, dir);
+        const url = `https://${site.subdomain}.puter.site`;
+        log('✅ Published: ' + url);
+        window.open(url, '_blank');
+      } catch (e) {
+        log('❌ Error: ' + (e?.message || 'Unknown'));
+      }
+    };
+
+    const chatTA = $('#chat-textarea');
+    const appendMsg = (role, txt) => {
+      const div = document.createElement('div');
+      div.style.cssText = role === 'user' ? 'font-weight:600;margin-bottom:8px' : 'border-left:2px solid rgba(255,255,255,0.3);padding-left:8px;margin-bottom:8px';
+      div.textContent = txt;
+      $('#messages').appendChild(div);
+      $('#messages').scrollTop = $('#messages').scrollHeight;
+    };
+
+    chatTA.addEventListener('input', () => {
+      chatTA.style.height = 'auto';
+      chatTA.style.height = chatTA.scrollHeight + 'px';
+    });
+
+    async function sendChat() {
+      const txt = chatTA.value.trim();
+      if (!txt) return;
+      appendMsg('user', txt);
+      chatTA.value = ''; 
+      chatTA.style.height = 'auto';
+      $('#chat-send').disabled = true;
+      try {
+        const res = await puter.ai.chat(txt);
+        const answer = res?.message?.content ?? res?.choices?.[0]?.message?.content ?? res?.text ?? res;
+        appendMsg('assistant', answer.toString().trim());
+      } catch (e) {
+        appendMsg('assistant', '(error) ' + (e?.message || 'Unknown error'));
+      } finally {
+        $('#chat-send').disabled = false;
+      }
+    }
+
+    $('#chat-send').onclick = sendChat;
+    chatTA.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendChat();
+      }
+    });
+  </script>
+</body>
+</html>
